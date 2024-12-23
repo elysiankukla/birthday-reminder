@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "birthday-reminder"
+version = "0.1.0"
+description = "Written by Addin & Hakimi"
+authors = ["elysiankukla"]
+license = "Apache-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+black = "^24.10.0"
+
+[tool.black]
+line-length = 100
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
