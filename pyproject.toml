@@ -8,10 +8,15 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+pytz = "^2024.2"
+requests = "^2.32.3"
+
+[tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
+isort = "^5.13.2"
 
 [tool.black]
-line-length = 100
+line-length = 120
 
 
 [build-system]
