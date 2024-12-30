@@ -10,7 +10,7 @@ readme = "README.md"
 python = "^3.12"
 pytz = "^2024.2"
 requests = "^2.32.3"
-python-telegram-bot = "^21.9"
+python-telegram-bot = {extras = ["job-queue"], version = "^21.9"}
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.10.0"
