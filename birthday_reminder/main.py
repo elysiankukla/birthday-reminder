@@ -4,7 +4,7 @@ from telegram.ext import Application, ApplicationBuilder, CommandHandler, Contex
 from birthday_reminder import BOT_TOKEN
 
 bot: Bot = Bot(BOT_TOKEN)
-app: Application = ApplicationBuilder().token(BOT_TOKEN).bot(bot).build()
+app: Application = ApplicationBuilder().bot(bot).build()
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
