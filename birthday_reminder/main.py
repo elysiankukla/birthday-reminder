@@ -63,7 +63,7 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
 def main() -> None:
     log.info("setting up handlers...")
     assert app.job_queue is not None
-    app.job_queue.run_daily(daily_trigger, datetime.time(hour=0, minute=0, second=0, tzinfo=ZoneInfo(TZ)))
+    app.job_queue.run_daily(daily_trigger, datetime.time(hour=3, minute=10, second=0, tzinfo=ZoneInfo(TZ)))
     app.add_handler(CommandHandler("start", start))
     log.info("done")
     app.run_polling(drop_pending_updates=True, poll_interval=60)
