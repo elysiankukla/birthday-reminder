@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 import google.generativeai as genai
 from telegram import PassportFile, Update
+from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
     ApplicationBuilder,
@@ -13,7 +14,6 @@ from telegram.ext import (
     Defaults,
 )
 from telegram.helpers import escape_markdown
-from telegram.constants import ParseMode
 
 from birthday_reminder import BOT_TOKEN, TZ
 from birthday_reminder.database import Database
@@ -49,13 +49,16 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     chat_session = model.start_chat(history=[])
-    response = await chat_session.send_message_async("Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style.")
+    response = await chat_session.send_message_async(
+        "Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style."
+    )
     text = (
         escape_markdown("Today is the birthday of:", version=2)
         + "\n*"
         + escape_markdown(", ".join(bday), version=2).strip()
         + "*\n"
         + escape_markdown(f"\n{response.text}", version=2)
+        + escape_markdown(" ✨🥳✨", version=2)
     )
 
     await context.bot.send_message(-1001264770246, text, parse_mode=ParseMode.MARKDOWN_V2)
