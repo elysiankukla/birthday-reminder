@@ -44,15 +44,16 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def listbday(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     assert update.message is not None
     bday: dict[str, dict[str, str]] = db.get_raw_data()
-    text = ""
+    text = "```\n"
     for key, value in bday.items():
         text += (
-            "```\n"
-            + escape_markdown(
+            escape_markdown(
                 f"{' '.join(key.split(' ')[:3])} {value.get('day')}/{value.get('month')}/{value.get('year')}", version=2
             )
-            + "\n```"
+            + "\n"
         )
+
+    text += "\n```"
 
     await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN_V2)
 
