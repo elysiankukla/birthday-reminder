@@ -93,4 +93,4 @@ def main() -> None:
     app.add_handler(CommandHandler("list", listbday, block=False))
     app.add_handler(CommandHandler("refresh", refresh, block=False))
     log.info("done")
-    app.run_polling(drop_pending_updates=True, poll_interval=60)
+    app.run_polling(drop_pending_updates=True)
