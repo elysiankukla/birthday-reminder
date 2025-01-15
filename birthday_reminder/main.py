@@ -41,6 +41,23 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("hi!")
 
 
+async def listbday(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    assert update.message is not None
+    db.prepare_database()
+    bday: dict[str, dict[str, str]] = db.get_raw_data()
+    text = ""
+    for key, value in bday.items():
+        text += (
+            "```\n"
+            + escape_markdown(
+                f"{' '.join(key.split(' ')[:3])} {value.get('day')}/{value.get('month')}/{value.get('year')}", version=2
+            )
+            + "\n```"
+        )
+
+    await update.message.reply_text(text, parse_mode=ParseMode.MARKDOWN_V2)
+
+
 async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
     db.prepare_database()
     dt = datetime.datetime.now(ZoneInfo(TZ))
@@ -68,6 +85,7 @@ def main() -> None:
     log.info("setting up handlers...")
     assert app.job_queue is not None
     app.job_queue.run_daily(daily_trigger, datetime.time(hour=0, minute=0, second=0, tzinfo=ZoneInfo(TZ)))
-    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("start", start, block=False))
+    app.add_handler(CommandHandler("list", listbday, block=False))
     log.info("done")
     app.run_polling(drop_pending_updates=True, poll_interval=60)
