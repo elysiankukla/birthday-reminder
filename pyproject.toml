@@ -1,23 +1,16 @@
-[tool.poetry]
+[project]
 name = "birthday-reminder"
 version = "0.1.0"
-description = "Written by Addin & Hakimi"
-authors = ["elysiankukla"]
-license = "Apache-2.0"
+description = "Add your description here"
 readme = "README.md"
-
-[tool.poetry.dependencies]
-python = "^3.12"
-pytz = "^2024.2"
-requests = "^2.32.3"
-python-telegram-bot = {extras = ["job-queue"], version = "^21.9"}
-google-generativeai = "^0.8.3"
-
-[tool.poetry.group.dev.dependencies]
-black = "^24.10.0"
-isort = "^5.13.2"
-pylint = "^3.3.3"
-ipython = "^8.31.0"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+    "google-generativeai>=0.8.3",
+    "python-telegram-bot[job-queue]>=21.10",
+    "pytz>=2024.2",
+    "requests>=2.32.3",
+]
 
 [tool.black]
 line-length = 120
@@ -28,7 +21,10 @@ profile = "black"
 [tool.pylint]
 max-line-length = 120
 
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "black>=24.10.0",
+    "ipython>=8.31.0",
+    "isort>=5.13.2",
+    "pylint>=3.3.3",
+]
