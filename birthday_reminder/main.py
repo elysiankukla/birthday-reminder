@@ -1,4 +1,3 @@
-import gc
 import datetime
 import logging
 import os
@@ -22,6 +21,7 @@ from birthday_reminder.database import Database
 defaults: Defaults = Defaults(tzinfo=ZoneInfo(TZ))
 log: logging.Logger = logging.getLogger(__name__)
 app: Application = ApplicationBuilder().token(BOT_TOKEN).defaults(defaults).build()
+db: Database = Database()
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
 
@@ -43,7 +43,6 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def listbday(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     assert update.message is not None
-    db: Database = Database()
     bday: dict[str, dict[str, str]] = db.get_raw_data()
     text = "```\n"
     for key, value in bday.items():
@@ -61,13 +60,11 @@ async def listbday(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 async def refresh(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     assert update.message is not None
-    db: Database = Database()
     db.prepare_database()
     await update.message.reply_text("refreshed db")
 
 
 async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
-    db: Database = Database()
     dt = datetime.datetime.now(ZoneInfo(TZ))
     bday: list[str] = db.get_birthday_for_day(dt.month, dt.day)
     if len(bday) == 0:
