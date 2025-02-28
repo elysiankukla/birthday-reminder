@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 from zoneinfo import ZoneInfo
+from textwrap import dedent
 
 import google.generativeai as genai
 from telegram import PassportFile, Update
@@ -33,7 +34,9 @@ generation_config = {
     "response_mime_type": "text/plain",
 }
 
-model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp", generation_config=generation_config)  # type: ignore
+model = genai.GenerativeModel(
+    model_name="gemini-2.0-flash-exp", generation_config=generation_config
+)  # type: ignore
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -48,7 +51,8 @@ async def listbday(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     for key, value in bday.items():
         text += (
             escape_markdown(
-                f"{' '.join(key.split(' ')[:3])} {value.get('day')}/{value.get('month')}/{value.get('year')}", version=2
+                f"{' '.join(key.split(' ')[:3])} {value.get('day')}/{value.get('month')}/{value.get('year')}",
+                version=2,
             )
             + "\n"
         )
@@ -83,14 +87,37 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
         + escape_markdown(" ✨🥳✨", version=2)
     )
 
-    msg = await context.bot.send_message(-1001264770246, text, parse_mode=ParseMode.MARKDOWN_V2)
+    msg = await context.bot.send_message(
+        -1001264770246, text, parse_mode=ParseMode.MARKDOWN_V2
+    )
     await msg.pin(disable_notification=False)
+
+
+async def monthly_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
+    dt = datetime.datetime.now(ZoneInfo(TZ))
+    text: str = "People with their birthday this month:\n"
+    bday: dict[str, dict[str, str]] = db.get_birthday_for_month(dt.month)
+
+    for person, date_data in bday.items():
+        text += f"{person} - {date_data.get('day')}-{date_data.get('month')}-{date_data.get('year')}\n"
+
+    msg = await context.bot.send_message(
+        -1001264770246, escape_markdown(text, version=2), parse_mode=ParseMode.MARKDOWN_V2
+    )
+    await msg.pin()
 
 
 def main() -> None:
     log.info("setting up handlers...")
     assert app.job_queue is not None
-    app.job_queue.run_daily(daily_trigger, datetime.time(hour=0, minute=0, second=0, tzinfo=ZoneInfo(TZ)))
+    app.job_queue.run_monthly(
+        callback=monthly_trigger,
+        when=datetime.time(hour=0, minute=0, second=0, tzinfo=ZoneInfo(TZ)),
+        day=1,
+    )
+    app.job_queue.run_daily(
+        daily_trigger, datetime.time(hour=0, minute=0, second=1, tzinfo=ZoneInfo(TZ))
+    )
     app.add_handler(CommandHandler("start", start, block=False))
     app.add_handler(CommandHandler("list", listbday, block=False))
     app.add_handler(CommandHandler("refresh", refresh, block=False))
