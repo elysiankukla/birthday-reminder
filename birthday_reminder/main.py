@@ -83,7 +83,8 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
         + escape_markdown(" ✨🥳✨", version=2)
     )
 
-    await context.bot.send_message(-1001264770246, text, parse_mode=ParseMode.MARKDOWN_V2)
+    msg = await context.bot.send_message(-1001264770246, text, parse_mode=ParseMode.MARKDOWN_V2)
+    await msg.pin(disable_notification=False)
 
 
 def main() -> None:
