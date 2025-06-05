@@ -35,7 +35,7 @@ generation_config = {
 }
 
 model = genai.GenerativeModel(
-    model_name="gemini-2.0-flash-exp", generation_config=generation_config
+    model_name="gemini-2.5-flash-preview-05-20", generation_config=generation_config
 )  # type: ignore
 
 
