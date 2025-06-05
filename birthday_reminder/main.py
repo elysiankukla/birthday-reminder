@@ -75,9 +75,13 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
         return
 
     chat_session = model.start_chat(history=[])
-    response = await chat_session.send_message_async(
-        "Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style."
-    )
+    prompt: str = "Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style."
+
+    # Special request
+    if "AMMAR FAIZ BIN MOHD KAMAL" in bday:
+        prompt += " Your output must be in Malay (Bahasa Melayu)."
+
+    response = await chat_session.send_message_async(prompt)
     text = (
         escape_markdown("Today is the birthday of:", version=2)
         + "\n*"
@@ -102,7 +106,9 @@ async def monthly_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
         text += f"{person} - {date_data.get('day')}-{date_data.get('month')}-{date_data.get('year')}\n"
 
     msg = await context.bot.send_message(
-        -1001264770246, escape_markdown(text, version=2), parse_mode=ParseMode.MARKDOWN_V2
+        -1001264770246,
+        escape_markdown(text, version=2),
+        parse_mode=ParseMode.MARKDOWN_V2,
     )
     await msg.pin()
 
