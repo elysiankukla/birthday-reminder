@@ -2,10 +2,9 @@ import datetime
 import logging
 import os
 from zoneinfo import ZoneInfo
-from textwrap import dedent
 
 import google.generativeai as genai
-from telegram import PassportFile, Update
+from telegram import Update
 from telegram.constants import ParseMode
 from telegram.ext import (
     Application,
@@ -26,13 +25,13 @@ db: Database = Database()
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY", ""))
 
-generation_config = {
-    "temperature": 1,
-    "top_p": 0.95,
-    "top_k": 40,
-    "max_output_tokens": 8192,
-    "response_mime_type": "text/plain",
-}
+generation_config = genai.GenerationConfig(
+    temperature=1,
+    top_p=0.95,
+    top_k=40,
+    max_output_tokens=8192,
+    response_mime_type="text/plain",
+)
 
 model = genai.GenerativeModel(
     model_name="gemini-2.5-flash", generation_config=generation_config
@@ -78,7 +77,10 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
     prompt: str = "Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style."
 
     # Special request
-    if any(name in bday for name in ("AMMAR FAIZ BIN MOHD KAMAL", "MUHAMMAD HAZRIL HAZIM BIN NOORFARIQ")):
+    if any(
+        name in bday
+        for name in ("AMMAR FAIZ BIN MOHD KAMAL", "MUHAMMAD HAZRIL HAZIM BIN NOORFARIQ")
+    ):
         prompt += " Your output must be in Malay (Bahasa Melayu)."
 
     response = await chat_session.send_message_async(prompt)
