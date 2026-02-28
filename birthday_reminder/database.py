@@ -25,7 +25,9 @@ class Database:
         """
         response: requests.Response = requests.get(self.url, timeout=10)
         if response.status_code != 200:
-            raise ConnectionError(f"Failed to fetch data from the database. Status code: {response.status_code}")
+            raise ConnectionError(
+                f"Failed to fetch data from the database. Status code: {response.status_code}"
+            )
         self.data = response.json()  # type: ignore (we already know the type)
         self.database_ready = True
 
@@ -42,9 +44,17 @@ class Database:
             if int(value.get("month", 0)) == month:
                 pass
 
-        people = [key for key, value in self.data.items() if int(value.get("month", "0")) == month]
+        people = [
+            key
+            for key, value in self.data.items()
+            if int(value.get("month", "0")) == month
+        ]
         return {person: self.data.get(person) for person in people}  # type: ignore
 
     def get_birthday_for_day(self, month: int, day: int) -> list[str]:
         by_month = self.get_birthday_for_month(month)
-        return [person for person, birthday_data in by_month.items() if int(birthday_data.get("day", "")) == day]
+        return [
+            person
+            for person, birthday_data in by_month.items()
+            if int(birthday_data.get("day", "")) == day
+        ]
