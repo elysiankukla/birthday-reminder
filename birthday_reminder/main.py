@@ -78,7 +78,7 @@ async def daily_trigger(context: ContextTypes.DEFAULT_TYPE) -> None:
     prompt: str = "Generate a short birthday wish (20-50 words). Just one. Send it directly without any markdown formatting. Also wish for good stuff, gen-z style."
 
     # Special request
-    if "AMMAR FAIZ BIN MOHD KAMAL" in bday:
+    if any(name in bday for name in ("AMMAR FAIZ BIN MOHD KAMAL", "MUHAMMAD HAZRIL HAZIM BIN NOORFARIQ")):
         prompt += " Your output must be in Malay (Bahasa Melayu)."
 
     response = await chat_session.send_message_async(prompt)
